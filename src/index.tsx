@@ -1,9 +1,16 @@
 /* @refresh reload */
+import { Calendar } from '@/components/calendar'
+import { TaskManagement } from '@/components/task-management'
 import { render } from 'solid-js/web'
-
-import { App } from './App'
 import './index.css'
 
-const root = document.getElementById('root')
+function App() {
+  return (
+    <div class="flex h-full min-h-screen w-full gap-4 bg-gray-300 p-4">
+      <TaskManagement />
+      <Calendar />
+    </div>
+  )
+}
 
-render(() => <App />, root!)
+render(() => <App />, document.getElementById('root')!)
