@@ -1,4 +1,4 @@
-import { Task } from '@/components/shared/Task'
+import { Task } from '@/shared/components/Task'
 import { Store } from '@/store'
 import { For, createSignal } from 'solid-js'
 

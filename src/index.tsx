@@ -1,6 +1,6 @@
 /* @refresh reload */
-import { Calendar } from '@/components/calendar'
-import { TaskManagement } from '@/components/task-management'
+import { Calendar } from '@/app/calendar'
+import { TaskManagement } from '@/app/task-management'
 import { render } from 'solid-js/web'
 import './index.css'
 

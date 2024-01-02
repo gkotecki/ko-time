@@ -1,4 +1,4 @@
-import { Task } from '@/components/shared/Task'
+import { Task } from '@/shared/components/Task'
 import { For, ParentProps, createSignal } from 'solid-js'
 
 export function Calendar() {
