@@ -1,20 +1,30 @@
 import { Task } from '@/shared/components/Task'
-import { For, ParentProps, createSignal } from 'solid-js'
+import { For, ParentProps } from 'solid-js'
+
+const now = new Date()
+const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
+
+const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0)
+const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+
+const weekOffset = thisMonth.getDay()
 
 export function Calendar() {
-  const [days, setDays] = createSignal(new Array(31).fill('').map((_, i) => i + 1))
+  const daysOfTheMonth = new Array(daysInMonth).fill(0).map((_, i) => i + 1)
+  const offsettedDays = [...new Array(weekOffset).fill(0), ...daysOfTheMonth]
 
   return (
     <div class="flex w-full flex-col gap-4 rounded-lg bg-gray-200 p-4 shadow-lg">
       <section class="flex justify-around">
         <h1 class="text-center">
-          {new Date().toLocaleString(undefined, { month: 'long', year: 'numeric' })}
+          {lastMonth.toLocaleString(undefined, { month: 'long', year: 'numeric' })}
         </h1>
         <h1 class="text-center">
-          {new Date().toLocaleString(undefined, { month: 'long', year: 'numeric' })}
+          {thisMonth.toLocaleString(undefined, { month: 'long', year: 'numeric' })}
         </h1>
         <h1 class="text-center">
-          {new Date().toLocaleString(undefined, { month: 'long', year: 'numeric' })}
+          {nextMonth.toLocaleString(undefined, { month: 'long', year: 'numeric' })}
         </h1>
       </section>
 
@@ -22,23 +32,34 @@ export function Calendar() {
         <For each={['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']}>
           {item => <div class="text-center">{item}</div>}
         </For>
-        <For each={days()}>
-          {item => (
-            <CalendarDay day={item}>
-              <Task label="aaa" />
-              <Task label="bbb" />
-            </CalendarDay>
-          )}
+        <For each={offsettedDays}>
+          {(item, index) =>
+            item ? (
+              <CalendarDay day={item} noWork={index() % 7 === 0 || index() % 7 === 6}>
+                <Task label="aaa" />
+                <Task label="bbb" />
+              </CalendarDay>
+            ) : (
+              <span />
+            )
+          }
         </For>
       </div>
     </div>
   )
 }
 
-function CalendarDay({ day = 0, children = null }: ParentProps<{ day: number }>) {
+function CalendarDay({
+  children,
+  day,
+  noWork = false,
+}: ParentProps<{ day: number; noWork: boolean }>) {
   return (
-    <span class="flex flex-col items-center justify-center gap-1 rounded-md bg-gray-100 p-1 text-xs shadow-md">
-      {day}
+    <span
+      class={`flex flex-col items-center justify-center gap-1 rounded-md bg-gray-100 p-1 text-xs shadow-md ${
+        noWork ? 'opacity-40' : ''
+      }`}>
+      {day.toString().padStart(2, '0')}
       {children}
     </span>
   )
