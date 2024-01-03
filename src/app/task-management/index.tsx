@@ -1,5 +1,5 @@
 import { Task } from '@/shared/components/Task'
-import { Store } from '@/store'
+import { Store } from '@/shared/store'
 import { For, createSignal } from 'solid-js'
 
 export function TaskManagement() {
