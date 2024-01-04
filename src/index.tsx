@@ -6,7 +6,7 @@ import './index.css'
 
 function App() {
   return (
-    <div class="flex h-full min-h-screen w-full gap-4 bg-gray-300 p-4">
+    <div class="flex h-full min-h-screen w-full gap-4 bg-gray-600 p-4">
       <TaskManagement />
       <Calendar />
     </div>

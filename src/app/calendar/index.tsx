@@ -15,7 +15,7 @@ export function Calendar() {
   const offsettedDays = [...new Array(weekOffset).fill(0), ...daysOfTheMonth]
 
   return (
-    <div class="flex w-full flex-col gap-4 rounded-lg bg-gray-200 p-4 shadow-lg">
+    <div class="flex w-full flex-col gap-4 rounded-lg bg-gray-500 p-4 shadow-lg">
       <section class="flex justify-around">
         <h1 class="text-center">
           {lastMonth.toLocaleString(undefined, { month: 'long', year: 'numeric' })}
@@ -56,7 +56,7 @@ function CalendarDay({
 }: ParentProps<{ day: number; noWork: boolean }>) {
   return (
     <span
-      class={`flex flex-col items-center justify-center gap-1 rounded-md bg-gray-100 p-1 text-xs shadow-md ${
+      class={`flex flex-col items-center justify-center gap-1 rounded-md bg-gray-400 p-1 text-xs shadow-md ${
         noWork ? 'opacity-40' : ''
       }`}>
       {day.toString().padStart(2, '0')}

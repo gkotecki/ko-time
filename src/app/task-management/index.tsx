@@ -6,7 +6,7 @@ export function TaskManagement() {
   const [val, setVal] = createSignal('')
 
   return (
-    <div class="flex flex-col gap-4 rounded-lg bg-gray-200 p-4 shadow-lg">
+    <div class="flex flex-col gap-4 rounded-lg bg-gray-500 p-4 shadow-lg">
       <h1 class="whitespace-nowrap text-center">Task Management</h1>
 
       <For each={Store.tasks.get()}>
