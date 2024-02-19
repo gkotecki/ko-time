@@ -14,7 +14,7 @@ const daysOfTheMonth = (d: Date) => new Array(daysInMonth(d)).fill(0).map((_, i)
 const offsettedDays = (d: Date) => [...new Array(weekOffset(d)).fill(0), ...daysOfTheMonth(d)]
 
 export function Calendar() {
-  const [now, setNow] = createSignal(new Date('2023-11-11'))
+  const [now, setNow] = createSignal(new Date())
 
   return (
     <div class="flex w-full flex-col gap-4 rounded-lg bg-gray-500 p-4 shadow-lg">
@@ -60,16 +60,7 @@ function CalendarDay(props: { now: Date; day: number; noWork: boolean }) {
       .padStart(2, '0')}/${props.now.getFullYear()}`
 
   const tasks = () => Store.parsedTasks.get().filter(task => task.date === date())
-  const workedHours = () =>
-    tasks().reduce(
-      (acc, { approvedWork, approvedExtras, pendingWork, pendingExtras }) =>
-        acc +
-        Number(approvedWork) +
-        Number(approvedExtras) +
-        Number(pendingWork) +
-        Number(pendingExtras),
-      0,
-    )
+  const workedHours = () => tasks().reduce((acc, { totalWork }) => acc + totalWork, 0)
 
   return (
     <span
@@ -87,7 +78,7 @@ function CalendarDay(props: { now: Date; day: number; noWork: boolean }) {
       {paddedDay()}
       <pre>{workedHours()}h total</pre>
       <For each={tasks()} fallback={<pre>0 tasks</pre>}>
-        {task => <Task label={task.project} hours={1} />}
+        {task => <Task label={task.project} hours={task.totalWork} />}
       </For>
     </span>
   )

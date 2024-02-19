@@ -20,6 +20,20 @@ export function Parser() {
           pendingExtras: cells[7],
         }
       })
+      .filter(
+        data =>
+          Object.values(data).filter(v => v === undefined).length < 2 &&
+          data.client !== 'Cliente' &&
+          data.project !== 'Projeto',
+      )
+      .map(data => ({
+        ...data,
+        totalWork:
+          Number(data.approvedWork) +
+          Number(data.pendingWork) +
+          Number(data.approvedExtras) +
+          Number(data.pendingExtras),
+      }))
 
     const hierarchy: any = {}
 

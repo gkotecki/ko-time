@@ -9,6 +9,7 @@ type ParsedTask = {
   approvedExtras: string
   pendingWork: string
   pendingExtras: string
+  totalWork: number
 }
 
 const tasks = createSignal<any[]>(JSON.parse(localStorage.getItem('tasks') || '[]'))
