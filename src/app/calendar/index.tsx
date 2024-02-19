@@ -1,30 +1,32 @@
+import { Parser } from '@/app/parser'
 import { Task } from '@/shared/components/Task'
-import { For, ParentProps } from 'solid-js'
+import { Store } from '@/shared/store'
+import { For, createSignal } from 'solid-js'
 
-const now = new Date()
-const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
+const daysInMonth = (d: Date) => new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()
 
-const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0)
-const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+const lastMonth = (d: Date) => new Date(d.getFullYear(), d.getMonth(), 0)
+const thisMonth = (d: Date) => new Date(d.getFullYear(), d.getMonth(), 1)
+const nextMonth = (d: Date) => new Date(d.getFullYear(), d.getMonth() + 1, 1)
 
-const weekOffset = thisMonth.getDay()
+const weekOffset = (d: Date) => thisMonth(d).getDay()
+const daysOfTheMonth = (d: Date) => new Array(daysInMonth(d)).fill(0).map((_, i) => i + 1)
+const offsettedDays = (d: Date) => [...new Array(weekOffset(d)).fill(0), ...daysOfTheMonth(d)]
 
 export function Calendar() {
-  const daysOfTheMonth = new Array(daysInMonth).fill(0).map((_, i) => i + 1)
-  const offsettedDays = [...new Array(weekOffset).fill(0), ...daysOfTheMonth]
+  const [now, setNow] = createSignal(new Date('2023-11-11'))
 
   return (
     <div class="flex w-full flex-col gap-4 rounded-lg bg-gray-500 p-4 shadow-lg">
       <section class="flex justify-around">
-        <h1 class="text-center">
-          {lastMonth.toLocaleString(undefined, { month: 'long', year: 'numeric' })}
+        <h1 class="text-center" onClick={e => setNow(lastMonth(now()))}>
+          {lastMonth(now()).toLocaleString(undefined, { month: 'long', year: 'numeric' })}
         </h1>
         <h1 class="text-center">
-          {thisMonth.toLocaleString(undefined, { month: 'long', year: 'numeric' })}
+          {thisMonth(now()).toLocaleString(undefined, { month: 'long', year: 'numeric' })}
         </h1>
-        <h1 class="text-center">
-          {nextMonth.toLocaleString(undefined, { month: 'long', year: 'numeric' })}
+        <h1 class="text-center" onClick={e => setNow(nextMonth(now()))}>
+          {nextMonth(now()).toLocaleString(undefined, { month: 'long', year: 'numeric' })}
         </h1>
       </section>
 
@@ -32,35 +34,61 @@ export function Calendar() {
         <For each={['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']}>
           {item => <div class="text-center">{item}</div>}
         </For>
-        <For each={offsettedDays}>
+        <For each={offsettedDays(now())}>
           {(item, index) =>
             item ? (
-              <CalendarDay day={item} noWork={index() % 7 === 0 || index() % 7 === 6}>
-                <Task label="aaa" />
-                <Task label="bbb" />
-              </CalendarDay>
+              <CalendarDay now={now()} day={item} noWork={index() % 7 === 0 || index() % 7 === 6} />
             ) : (
               <span />
             )
           }
         </For>
       </div>
+
+      {/* <pre class="text-xs text-white">{JSON.stringify(Store.parsedTasks.get(), null, 4)}</pre> */}
+
+      <Parser />
     </div>
   )
 }
 
-function CalendarDay({
-  children,
-  day,
-  noWork = false,
-}: ParentProps<{ day: number; noWork: boolean }>) {
+function CalendarDay(props: { now: Date; day: number; noWork: boolean }) {
+  const paddedDay = () => props.day.toString().padStart(2, '0')
+  const date = () =>
+    `${paddedDay()}/${(props.now.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}/${props.now.getFullYear()}`
+
+  const tasks = () => Store.parsedTasks.get().filter(task => task.date === date())
+  const workedHours = () =>
+    tasks().reduce(
+      (acc, { approvedWork, approvedExtras, pendingWork, pendingExtras }) =>
+        acc +
+        Number(approvedWork) +
+        Number(approvedExtras) +
+        Number(pendingWork) +
+        Number(pendingExtras),
+      0,
+    )
+
   return (
     <span
       class={`flex flex-col items-center justify-center gap-1 rounded-md bg-gray-400 p-1 text-xs shadow-md ${
-        noWork ? 'opacity-40' : ''
+        props.noWork ? 'opacity-40' : ''
+      } ${
+        workedHours() > 0 && workedHours() < 8
+          ? 'bg-yellow-400'
+          : workedHours() === 8
+            ? 'bg-green-400'
+            : workedHours() > 8
+              ? 'bg-red-400'
+              : ''
       }`}>
-      {day.toString().padStart(2, '0')}
-      {children}
+      {paddedDay()}
+      <pre>{workedHours()}h total</pre>
+      <For each={tasks()} fallback={<pre>0 tasks</pre>}>
+        {task => <Task label={task.project} hours={1} />}
+      </For>
     </span>
   )
 }

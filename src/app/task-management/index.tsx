@@ -9,6 +9,30 @@ export function TaskManagement() {
     <div class="flex flex-col gap-4 rounded-lg bg-gray-500 p-4 shadow-lg">
       <h1 class="whitespace-nowrap text-center">Task Management</h1>
 
+      {/* <pre>{JSON.stringify(Store.taskHierarchy.get(), null, 2)}</pre> */}
+
+      <For each={Object.keys(Store.taskHierarchy.get())}>
+        {client => (
+          <div class="flex flex-col gap-2 rounded-md bg-white/20 p-2 shadow-md">
+            <label>{client}</label>
+            <For each={Object.keys(Store.taskHierarchy.get()[client])}>
+              {project => (
+                <div class="flex flex-col gap-3 rounded bg-white/20 p-2 shadow">
+                  <label>{project}</label>
+                  <For each={Object.keys(Store.taskHierarchy.get()[client][project])}>
+                    {activity => (
+                      <div class="flex gap-4">
+                        <Task label={activity} hours={1} />
+                      </div>
+                    )}
+                  </For>
+                </div>
+              )}
+            </For>
+          </div>
+        )}
+      </For>
+
       <For each={Store.tasks.get()}>
         {item => (
           <div class="flex gap-4">
