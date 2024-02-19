@@ -1,4 +1,4 @@
-import { Store } from '@/shared/store'
+import { Store, type TaskHierarchy } from '@/shared/store'
 
 export function Parser() {
   function parseValue(rawInput: string) {
@@ -35,12 +35,13 @@ export function Parser() {
           Number(data.pendingExtras),
       }))
 
-    const hierarchy: any = {}
+    const hierarchy: TaskHierarchy = {}
 
-    for (const { client, project, activity } of parsedValues) {
+    for (const { client, project, activity, totalWork } of parsedValues) {
       hierarchy[client] ??= {}
       hierarchy[client][project] ??= {}
-      hierarchy[client][project][activity] ??= { client, project, activity }
+      hierarchy[client][project][activity] ??= { client, project, activity, totalWork }
+      hierarchy[client][project][activity].totalWork += totalWork
     }
 
     Store.parsedTasks.set(parsedValues)
@@ -54,8 +55,9 @@ export function Parser() {
     <div class="mt-auto flex flex-col gap-4 rounded-lg bg-gray-400 p-4 shadow-md">
       <h1 class="whitespace-nowrap text-center">Data Parser</h1>
       <textarea
-        class="min-h-16 rounded-md border border-gray-800/30 text-[.6em]"
+        class="min-h-16 rounded-md border border-gray-800/30 p-2 text-[.6em]"
         spellcheck={false}
+        placeholder="Paste page data here..."
         onChange={e => parseValue(e.currentTarget.value)}></textarea>
     </div>
   )

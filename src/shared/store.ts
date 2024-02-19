@@ -1,6 +1,6 @@
 import { createSignal } from 'solid-js'
 
-type ParsedTask = {
+export type ParsedTask = {
   client: string
   project: string
   activity: string
@@ -12,9 +12,22 @@ type ParsedTask = {
   totalWork: number
 }
 
+export type TaskHierarchy = {
+  [client: string]: {
+    [project: string]: {
+      [activity: string]: {
+        client: string
+        project: string
+        activity: string
+        totalWork: number
+      }
+    }
+  }
+}
+
 const tasks = createSignal<any[]>(JSON.parse(localStorage.getItem('tasks') || '[]'))
 const parsedTasks = createSignal<ParsedTask[]>([])
-const taskHierarchy = createSignal<any>({})
+const taskHierarchy = createSignal<TaskHierarchy>({})
 
 export const Store = Object.freeze({
   tasks: Object.freeze({ get: tasks[0], set: tasks[1] }),

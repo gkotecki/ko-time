@@ -19,15 +19,19 @@ export function Calendar() {
   return (
     <div class="flex w-full flex-col gap-4 rounded-lg bg-gray-500 p-4 shadow-lg">
       <section class="flex justify-around">
-        <h1 class="text-center" onClick={e => setNow(lastMonth(now()))}>
-          {lastMonth(now()).toLocaleString(undefined, { month: 'long', year: 'numeric' })}
-        </h1>
-        <h1 class="text-center">
+        <button
+          class="rounded bg-gray-300 px-4 py-2 text-center shadow-lg transition hover:bg-gray-400"
+          onClick={() => setNow(lastMonth(now()))}>
+          {'<<'} {lastMonth(now()).toLocaleString(undefined, { month: 'long', year: 'numeric' })}
+        </button>
+        <h1 class="text-center text-2xl font-bold text-white">
           {thisMonth(now()).toLocaleString(undefined, { month: 'long', year: 'numeric' })}
         </h1>
-        <h1 class="text-center" onClick={e => setNow(nextMonth(now()))}>
-          {nextMonth(now()).toLocaleString(undefined, { month: 'long', year: 'numeric' })}
-        </h1>
+        <button
+          class="rounded bg-gray-300 px-4 py-2 text-center shadow-lg transition hover:bg-gray-400"
+          onClick={() => setNow(nextMonth(now()))}>
+          {nextMonth(now()).toLocaleString(undefined, { month: 'long', year: 'numeric' })} {'>>'}
+        </button>
       </section>
 
       <div class="grid grid-cols-7 gap-1">
@@ -44,8 +48,6 @@ export function Calendar() {
           }
         </For>
       </div>
-
-      {/* <pre class="text-xs text-white">{JSON.stringify(Store.parsedTasks.get(), null, 4)}</pre> */}
 
       <Parser />
     </div>
